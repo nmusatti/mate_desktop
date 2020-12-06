@@ -1,38 +1,38 @@
-Role Name
-=========
+mate_desktop
+============
 
-A brief description of the role goes here.
+An Ansible role to install the MATE Desktop on Red Hat distributions, i.e. CentOS 8, CentOS 7 and Fedora. RHEL is not tested, but should work. On CentOS 8, as no EPEL MATE package exists, the [official unofficial repository for MATE for EL8](https://copr.fedorainfracloud.org/coprs/stenstorp/MATE/) is used.
+
+*Note that since I wrote this role I stopped using MATE, so I'm not likely to spend much time maintaining it. If you would like to take over the project, let me know.*
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+This role is meant to be used on a graphical workstation type of installation.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+None.
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+The [repo-epel](https://galaxy.ansible.com/geerlingguy/repo-epel) role is used to install the EPEL repository on CentOS.
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
+    - hosts: workstations
       roles:
-         - { role: username.rolename, x: 42 }
+        - nmusatti.mate_desktop
 
 License
 -------
 
-BSD
+GPLv3
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Nicola Musatti - https://github.com/nmusatti
