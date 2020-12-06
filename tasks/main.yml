@@ -1,2 +1,147 @@
 ---
-# tasks file for mate_desktop
+- name: Enable the EPEL repository
+  include_role:
+    name: geerlingguy.repo-epel
+  when: mate_platform != 'Fedora'
+
+- name: Install Mate (CentOS7)
+  yum:
+    name:
+      - "@^mate-desktop-environment"
+    state: present
+  become: true
+  when: mate_platform == 'CentOS7'
+
+- name: Install Mate (Fedora)
+  dnf:
+    name:
+      - "@mate-desktop"
+    state: present
+    exclude:
+      - fedora-release-matecompiz
+    skip_broken: true
+  become: true
+  when: mate_platform == 'Fedora'
+
+- name: Check whether the PowerTools repository is enabled
+  command: grep -q 'enabled=1' /etc/yum.repos.d/CentOS-PowerTools.repo
+  register: powertools_enabled
+  check_mode: false
+  ignore_errors: true
+  changed_when: false
+  when: mate_platform == 'CentOS8'
+
+- name: Install DNF plugins
+  dnf:
+    name:
+      - dnf-plugins-core
+    state: present
+  become: true
+  when: mate_platform == 'CentOS8' and powertools_enabled.rc != 0
+
+- name: Enable the PowerTools repository
+  command: dnf config-manager --set-enabled PowerTools
+  become: true
+  when: mate_platform == 'CentOS8' and powertools_enabled.rc != 0
+
+- name: Check whether the stenstorp/MATE repository is enabled
+  command: dnf copr list --enabled
+  register: stenstorp_enabled
+  check_mode: false
+  ignore_errors: true
+  changed_when: false
+  when: mate_platform == 'CentOS8'
+
+- name: Enable the stenstorp/MATE repository
+  command: dnf copr -y enable stenstorp/MATE
+  become: true
+  when: mate_platform == 'CentOS8' and stenstorp_enabled.stdout.find('stenstorp/MATE') == -1
+
+- name: Install Mate (CentOS8)
+  dnf:
+    name:
+      - NetworkManager-adsl
+      - NetworkManager-bluetooth
+      - NetworkManager-libreswan-gnome
+      - NetworkManager-openvpn-gnome
+      - NetworkManager-ovs
+      - NetworkManager-ppp
+      - NetworkManager-team
+      - NetworkManager-wifi
+      - NetworkManager-wwan
+      - abrt-desktop
+      - abrt-java-connector
+      - adwaita-gtk2-theme
+      - alsa-plugins-pulseaudio
+      - atril
+      - atril-caja
+      - atril-thumbnailer
+      - caja
+      - caja-actions
+      - caja-image-converter
+      - caja-open-terminal
+      - caja-sendto
+      - caja-wallpaper
+      - caja-xattr-tags
+      - dconf-editor
+      - engrampa
+      - eom
+      - firewall-config
+      - gnome-disk-utility
+      - gnome-epub-thumbnailer
+      - gstreamer1-plugins-ugly-free
+      - gtk2-engines
+      - gucharmap
+      - gvfs-afc
+      - gvfs-afp
+      - gvfs-archive
+      - gvfs-fuse
+      - gvfs-gphoto2
+      - gvfs-mtp
+      - gvfs-smb
+      - initial-setup-gui
+      - libmatekbd
+      - libmatemixer
+      - libmateweather
+      - libsecret
+      - lm_sensors
+      - marco
+      - mate-applets
+      - mate-backgrounds
+      - mate-calc
+      - mate-control-center
+      - mate-desktop
+      - mate-dictionary
+      - mate-disk-usage-analyzer
+      - mate-icon-theme
+      - mate-media
+      - mate-menus
+      - mate-menus-preferences-category-menu
+      - mate-notification-daemon
+      - mate-panel
+      - mate-polkit
+      - mate-power-manager
+      - mate-screensaver
+      - mate-screenshot
+      - mate-search-tool
+      - mate-session-manager
+      - mate-settings-daemon
+      - mate-system-log
+      - mate-system-monitor
+      - mate-terminal
+      - mate-themes
+      - mate-user-admin
+      - mate-user-guide
+      - mozo
+      - network-manager-applet
+      - nm-connection-editor
+      - p7zip
+      - p7zip-plugins
+      - pluma
+      - seahorse
+      - seahorse-caja
+      - xdg-user-dirs-gtk
+    state: present
+    skip_broken: true
+  become: true
+  when: mate_platform == 'CentOS8'
