@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include mate_desktop"
+      include_role:
+        name: "mate_desktop"
